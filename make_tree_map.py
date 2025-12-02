@@ -162,16 +162,23 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
         # PHOTO LOOKUP
         # ==========================
         photo_html = ""
-
+        
         if tree_code and photos_dir.exists():
-
-            img_name = f"DJW-{tree_code}-1.jpg"
-            img_path = photos_dir / img_name
-
-            if img_path.exists():
+        
+            code = tree_code.strip().lower()
+        
+            matches = [
+                p for p in photos_dir.iterdir()
+                if code in p.stem.lower()
+                and p.suffix.lower() in [".jpg",".jpeg",".png"]
+            ]
+        
+            if matches:
+                img_path = matches[0]
+        
                 photo_html = f"""
                 <br>
-                <img src="{PHOTOS_DIR}/{img_name}"
+                <img src="{PHOTOS_DIR}/{img_path.name}"
                      width="200"
                      style="border-radius:8px; margin-top:6px;">
                 """
@@ -221,6 +228,7 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     m.save(base_dir / OUTPUT_HTML)
 
     return m
+
 
 
 
