@@ -4,6 +4,7 @@ import numpy as np
 from itertools import cycle
 from pathlib import Path
 import geopandas as gpd
+import zipfile
 
 # =====================================================
 # CONFIG
@@ -13,33 +14,36 @@ DATA_FILE = "WilletTreeInventory_coordinates.xlsx"
 SHEET_NAME = 1
 OUTPUT_HTML = "willet_tree_map.html"
 
+PHOTOS_ZIP = "Photos.zip"
+PHOTOS_DIR = "Photos"
+
 # =====================================================
 # MAIN FUNCTION
 # =====================================================
 
 def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     """
-    Creates a folium tree map with canopy circles, polygon markers by genus,
-    and school boundary overlay from a shapefile.
-
-    Parameters
-    ----------
-    data_path : str or Path
-        Path to the Excel inventory file.
-    boundary_shp : str
-        Path to boundary shapefile relative to this .py file.
-
-    Returns
-    -------
-    folium.Map
+    Creates an interactive folium tree map with canopy circles, polygon markers
+    by genus, school boundary overlay, and a popup with a photo per tree.
     """
 
     # ==========================
     # PATHS
     # ==========================
-    base_dir = Path(__file__).parent
+    base_dir = Path(__file__).parent.resolve()
     data_path = Path(data_path)
     boundary_path = base_dir / boundary_shp
+
+    photos_zip = base_dir / PHOTOS_ZIP
+    photos_dir = base_dir / PHOTOS_DIR
+
+    # ==========================
+    # UNZIP PHOTOS (run once)
+    # ==========================
+    if photos_zip.exists() and not photos_dir.exists():
+        print("📸 Extracting photos...")
+        with zipfile.ZipFile(photos_zip, "r") as z:
+            z.extractall(photos_dir)
 
     # ==========================
     # LOAD INVENTORY
@@ -47,28 +51,21 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     df = pd.read_excel(data_path, sheet_name=SHEET_NAME)
     df_map = df.dropna(subset=["lat", "lon"]).copy()
 
-    center = [
-        df_map["lat"].mean(),
-        df_map["lon"].mean()
-    ]
+    center = [df_map["lat"].mean(),
+              df_map["lon"].mean()]
 
     # ==========================
     # BASE MAP
     # ==========================
-    m = folium.Map(
-        location=center,
-        zoom_start=18,
-        tiles="OpenStreetMap",
-        name="OSM"
-    )
+    m = folium.Map(location=center,
+                   zoom_start=18,
+                   tiles="OpenStreetMap",
+                   name="OSM")
+
+    folium.TileLayer("CartoDB positron", name="CartoDB positron").add_to(m)
 
     folium.TileLayer(
-        tiles="CartoDB positron",
-        name="CartoDB positron"
-    ).add_to(m)
-
-    folium.TileLayer(
-        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}",
         attr="Esri World Imagery",
         name="Esri Satellite",
         overlay=False,
@@ -82,11 +79,9 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
 
         gdf = gpd.read_file(boundary_path)
 
-        # Fix missing CRS
         if gdf.crs is None:
             gdf = gdf.set_crs(epsg=3310, inplace=False)
 
-        # Reproject for Folium (WGS84)
         gdf = gdf.to_crs(epsg=4326)
 
         folium.GeoJson(
@@ -99,7 +94,6 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
                 "fillOpacity": 0
             }
         ).add_to(m)
-
     else:
         print(f"⚠ WARNING: boundary shapefile not found -> {boundary_path}")
 
@@ -115,7 +109,7 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
         {"sides": 6, "rotation": 0},
         {"sides": 8, "rotation": 0},
         {"sides": 3, "rotation": 180},
-        {"sides": 4, "rotation": 0},
+        {"sides": 4, "rotation": 0}
     ]
 
     colors = [
@@ -128,10 +122,8 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     color_cycle = cycle(colors)
 
     genus_styles = {
-        g: {
-            "shape": next(shape_cycle),
-            "color": next(color_cycle)
-        }
+        g: {"shape": next(shape_cycle),
+            "color": next(color_cycle)}
         for g in genera
     }
 
@@ -142,14 +134,15 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
 
         lat, lon = float(r["lat"]), float(r["lon"])
         genus = r.get("Genus", "NA")
+        tree_code = r.get("TreeCode", "").strip()
+
         style = genus_styles.get(genus)
 
-        # ----- CANOPY SCALING -----
+        # ---- CANOPY SIZE ----
         ns = r.get("CrownNSm", np.nan)
         ew = r.get("CrownEWm", np.nan)
 
         crown_radius = None
-
         if pd.notna(ns) and pd.notna(ew):
             crown_radius = (ns + ew) / 4
         elif pd.notna(ns):
@@ -158,29 +151,50 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
             crown_radius = ew / 2
 
         if crown_radius:
-            folium.Circle(
-                location=[lat, lon],
-                radius=crown_radius,
-                fill=True,
-                fill_opacity=0.3,
-                color=None,
-                stroke=False
-            ).add_to(m)
+            folium.Circle([lat, lon],
+                           radius=crown_radius,
+                           fill=True,
+                           fill_opacity=0.3,
+                           color=None,
+                           stroke=False).add_to(m)
 
-        # ----- POPUP -----
+        # ==========================
+        # PHOTO LOOKUP
+        # ==========================
+        photo_html = ""
+
+        if tree_code and photos_dir.exists():
+
+            img_name = f"DJW-{tree_code}-1.jpg"
+            img_path = photos_dir / img_name
+
+            if img_path.exists():
+                photo_html = f"""
+                <br>
+                <img src="{PHOTOS_DIR}/{img_name}"
+                     width="200"
+                     style="border-radius:8px; margin-top:6px;">
+                """
+            else:
+                photo_html = "<br><i>No photo available</i>"
+
+        # ==========================
+        # POPUP
+        # ==========================
         popup_html = f"""
         <div style="font-size:13px;">
-            <b>Tree code:</b> {r.get('TreeCode','')}<br>
+            <b>Tree code:</b> {tree_code}<br>
             <b>Genus:</b> {r.get('Genus','')}<br>
             <b>Species:</b> {r.get('Species','')}<br>
             <b>DBH (cm):</b> {r.get('DBH1cm','')}<br>
             <b>Height (m):</b> {r.get('Heightm','')}
+            {photo_html}
         </div>
         """
 
         popup = folium.Popup(popup_html, max_width=300)
 
-        # ----- MARKER STYLE -----
+        # ---- MARKERS ----
         if style:
             shape = style["shape"]
             color = style["color"]
@@ -189,7 +203,7 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
             color = "gray"
 
         folium.RegularPolygonMarker(
-            location=[lat, lon],
+            [lat, lon],
             number_of_sides=shape["sides"],
             rotation=shape["rotation"],
             radius=7,
@@ -207,4 +221,6 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     m.save(base_dir / OUTPUT_HTML)
 
     return m
+
+
 
