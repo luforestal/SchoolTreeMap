@@ -6,6 +6,7 @@ from pathlib import Path
 import geopandas as gpd
 import zipfile
 import base64
+import subprocess
 
 
 # =====================================================
@@ -22,6 +23,16 @@ PHOTOS_DIR = "Photos"
 # =====================================================
 # MAIN FUNCTION
 # =====================================================
+drive_id = "1MzOkSNNjIejlXAKqPJUyxqozCrzuwmJT"
+download_file = "extra_data.zip"
+
+if not Path(download_file).exists():
+    subprocess.run([
+        "gdown",
+        "--id", drive_id,
+        "-O", download_file
+    ])
+
 
 def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     """
@@ -239,6 +250,7 @@ def build_tree_map(data_path, boundary_shp="Boundaries.shp"):
     m.save(base_dir / OUTPUT_HTML)
 
     return m
+
 
 
 
