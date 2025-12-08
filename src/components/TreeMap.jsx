@@ -370,13 +370,22 @@ const TreeMap = () => {
         </div>
       )}
       
+      {/* Home button - floating bottom left */}
+      <button 
+        className="home-icon-button"
+        onClick={() => window.location.href = window.location.pathname}
+        title="Back to home"
+      >
+        🏠
+      </button>
+      
       {/* Help button - floating bottom left */}
       <button 
         className="help-icon-button"
         onClick={() => setShowInstructionsModal(true)}
         title="How to use this map"
       >
-        ❓
+        ?
       </button>
       
       <div className="map-controls">

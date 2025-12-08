@@ -45,7 +45,7 @@ const HomePage = () => {
               <option value="" disabled>Choose a school...</option>
               {schools.map(school => (
                 <option key={school.id} value={school.id}>
-                  {school.school_name}
+                  {school.schoolName}
                 </option>
               ))}
             </select>
@@ -87,7 +87,7 @@ const HomePage = () => {
                     onClick={() => handleSchoolSelect(school.id)}
                   >
                     <div className="school-card-content">
-                      <h3>{school.school_name}</h3>
+                      <h3>{school.schoolName}</h3>
                       {school.address && <p className="school-address">{school.address}</p>}
                       <button className="view-map-btn">View Map →</button>
                     </div>
