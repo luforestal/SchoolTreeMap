@@ -110,14 +110,11 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
         crownRadius = (crownEW / 2) * 5
       }
       
-      // Build photo URL using photosUrl
+      // Store tree code for on-demand photo loading
       const treeCode = row.treecode || row.treeCode || ''
-      const photoUrl = treeCode && photosUrl
-        ? `${photosUrl}/${treeCode}.jpg`
-        : null
       
       return {
-        treeCode: row.treecode || row.treeCode || '',
+        treeCode: treeCode,
         lat: parseFloat(row.lat),
         lon: parseFloat(row.lon),
         genus: row.genus || '',
@@ -129,7 +126,7 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
         crownRadius,
         color: style.color,
         shape: style.shape,
-        photoUrl
+        photosBaseUrl: photosUrl // Store base URL for on-demand loading
       }
     })
     

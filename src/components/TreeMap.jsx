@@ -168,6 +168,9 @@ const TreeMap = () => {
         markerContainer.appendChild(markerEl)
 
         // Create popup (only used in popup mode)
+        const photoUrl = tree.treeCode && tree.photosBaseUrl
+          ? `${tree.photosBaseUrl}/${tree.treeCode}.jpg`
+          : null
         const popupContent = `
           <div class="tree-popup">
             <div><strong>Tree code:</strong> ${tree.treeCode}</div>
@@ -175,7 +178,7 @@ const TreeMap = () => {
             <div><strong>Species:</strong> ${tree.species}</div>
             <div><strong>DBH (cm):</strong> ${tree.dbh || 'N/A'}</div>
             <div><strong>Height (m):</strong> ${tree.height || 'N/A'}</div>
-            ${tree.photoUrl ? `<img src="${tree.photoUrl}" alt="Tree photo" class="tree-photo" />` : '<div class="no-photo">No photo available</div>'}
+            ${photoUrl ? `<img src="${photoUrl}" alt="Tree photo" class="tree-photo" loading="lazy" />` : '<div class="no-photo">No photo available</div>'}
           </div>
         `
 
@@ -314,7 +317,12 @@ const TreeMap = () => {
 
   const handleTreeSelect = (tree) => {
     setSelectedTree(tree)
-    setImageLoading(true)
+    // Only set loading state if tree has a photo
+    if (tree.treeCode && tree.photosBaseUrl) {
+      setImageLoading(true)
+    } else {
+      setImageLoading(false)
+    }
     
     // Remove active class from all markers
     document.querySelectorAll('.tree-marker-container').forEach(m => m.classList.remove('active'))
@@ -372,7 +380,7 @@ const TreeMap = () => {
         fullWidth
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">🗺️ How to Use This Map</Typography>
+          🗺️ How to Use This Map
           <IconButton onClick={() => setShowInstructionsModal(false)} size="small">
             <CloseIcon />
           </IconButton>
@@ -672,7 +680,7 @@ const TreeMap = () => {
 
               {/* Photo Section - Now at the top */}
               <Box sx={{ mb: 2 }} key={selectedTree.treeCode}>
-                {selectedTree.photoUrl ? (
+                {selectedTree.treeCode && selectedTree.photosBaseUrl ? (
                   <>
                     {imageLoading && (
                       <Box
@@ -690,9 +698,8 @@ const TreeMap = () => {
                       </Box>
                     )}
                     <img 
-                      src={selectedTree.photoUrl} 
-                      alt={`Tree ${selectedTree.treeCode}`} 
-                      loading="lazy"
+                      src={`${selectedTree.photosBaseUrl}/${selectedTree.treeCode}.jpg`}
+                      alt={`Tree ${selectedTree.treeCode}`}
                       style={{
                         width: '100%',
                         borderRadius: 8,
@@ -700,19 +707,19 @@ const TreeMap = () => {
                         display: imageLoading ? 'none' : 'block',
                       }}
                       onLoad={() => setImageLoading(false)}
-                      onError={(e) => {
+                      onError={() => {
                         setImageLoading(false)
-                        e.target.style.display = 'none'
-                        e.target.nextElementSibling.style.display = 'block'
                       }}
                     />
-                    <Card sx={{ display: 'none', bgcolor: '#f9f9f9' }}>
-                      <CardContent>
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic" textAlign="center">
-                          Photo not available
-                        </Typography>
-                      </CardContent>
-                    </Card>
+                    {!imageLoading && (
+                      <Card sx={{ display: 'none', bgcolor: '#f9f9f9' }}>
+                        <CardContent>
+                          <Typography variant="body2" color="text.secondary" fontStyle="italic" textAlign="center">
+                            Photo not available
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    )}
                   </>
                 ) : (
                   <Card sx={{ bgcolor: '#f9f9f9' }}>
