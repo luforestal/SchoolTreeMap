@@ -42,9 +42,16 @@ export async function loadSchools() {
     const schools = parseCSV(csvText)
     
     return schools.map(school => ({
-      ...school,
-      dataUrl: `${GITHUB_RAW_BASE}/public/${school.dataFile}`,
-      photosUrl: `${GITHUB_RAW_BASE}/${school.photosFolder}`
+      id: school.id,
+      school_name: school.school_name,
+      logo: school.logo,
+      address: school.address,
+      data_file: school.data_file || `trees/${school.id}.csv`,
+      boundary_file: school.boundary_file || `boundaries/${school.id}.geojson`,
+      photos_folder: school.photos_folder || `public/photos/${school.id}`,
+      dataUrl: `${GITHUB_RAW_BASE}/public/${school.data_file || `trees/${school.id}.csv`}`,
+      boundaryUrl: `${GITHUB_RAW_BASE}/public/${school.boundary_file || `boundaries/${school.id}.geojson`}`,
+      photosUrl: `${GITHUB_RAW_BASE}/${school.photos_folder || `public/photos/${school.id}`}`
     }))
   } catch (error) {
     console.error('Error loading schools:', error)
