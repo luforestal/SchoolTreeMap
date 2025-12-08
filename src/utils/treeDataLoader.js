@@ -99,8 +99,8 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
       
       // Calculate crown radius
       let crownRadius = null
-      const crownNS = parseFloat(row.crownNS)
-      const crownEW = parseFloat(row.crownEW)
+      const crownNS = parseFloat(row.crownNSm || row.crownNS)
+      const crownEW = parseFloat(row.crownEWm || row.crownEW)
       
       if (!isNaN(crownNS) && !isNaN(crownEW)) {
         crownRadius = ((crownNS + crownEW) / 4) * 5 // Convert meters to pixels at zoom 18
@@ -111,13 +111,13 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
       }
       
       // Build photo URL using photosUrl
-      const treeCode = row.treeCode || ''
+      const treeCode = row.treecode || row.treeCode || ''
       const photoUrl = treeCode && photosUrl
         ? `${photosUrl}/${treeCode}.jpg`
         : null
       
       return {
-        treeCode: row.treeCode || '',
+        treeCode: row.treecode || row.treeCode || '',
         lat: parseFloat(row.lat),
         lon: parseFloat(row.lon),
         genus: row.genus || '',

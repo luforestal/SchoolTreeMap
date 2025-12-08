@@ -4,6 +4,36 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import './TreeMap.css'
 import { loadTreeData } from '../utils/treeDataLoader'
 import { getSchoolIdFromURL, getSchoolConfig, loadSchoolBoundary } from '../utils/schoolLoader'
+import {
+  Box,
+  Drawer,
+  Typography,
+  Button,
+  ButtonGroup,
+  IconButton,
+  TextField,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  CircularProgress,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Card,
+  CardContent,
+  Fab,
+} from '@mui/material'
+import {
+  Close as CloseIcon,
+  NavigateBefore as PrevIcon,
+  NavigateNext as NextIcon,
+  Home as HomeIcon,
+  Help as HelpIcon,
+} from '@mui/icons-material'
 
 const TreeMap = () => {
   const mapContainer = useRef(null)
@@ -19,6 +49,8 @@ const TreeMap = () => {
   const [showInstructionsModal, setShowInstructionsModal] = useState(true)
   const [schoolConfig, setSchoolConfig] = useState(null)
   const [boundary, setBoundary] = useState(null)
+  const [visibleTreeCount, setVisibleTreeCount] = useState(20)
+  const [imageLoading, setImageLoading] = useState(false)
 
   // Load school configuration and data
   useEffect(() => {
@@ -282,6 +314,7 @@ const TreeMap = () => {
 
   const handleTreeSelect = (tree) => {
     setSelectedTree(tree)
+    setImageLoading(true)
     
     // Remove active class from all markers
     document.querySelectorAll('.tree-marker-container').forEach(m => m.classList.remove('active'))
@@ -320,259 +353,432 @@ const TreeMap = () => {
     tree.species.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Reset visible count when search changes
+  React.useEffect(() => {
+    setVisibleTreeCount(20)
+  }, [searchQuery])
+
+  const handleLoadMore = () => {
+    setVisibleTreeCount(prev => prev + 20)
+  }
+
   return (
-    <div className="tree-map-container">
+    <Box sx={{ display: 'flex', width: '100%', height: '100%', position: 'relative' }}>
       {/* Instructions Modal */}
-      {showInstructionsModal && (
-        <div className="modal-overlay" onClick={() => setShowInstructionsModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>🗺️ How to Use This Map</h2>
-              <button 
-                className="modal-close" 
-                onClick={() => setShowInstructionsModal(false)}
-                aria-label="Close"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="modal-body">
-              <ul className="instructions-list">
-                <li>Click on any tree marker on the map to view details</li>
-                <li>View detailed information and photos in the sidebar</li>
-                <li>Use the navigation arrows to browse through trees</li>
-                <li>Search for specific trees by code, genus, or species</li>
-                <li>Switch base maps using the buttons on the left</li>
-              </ul>
-            </div>
-            <div className="modal-footer">
-              <button 
-                className="modal-button"
-                onClick={() => setShowInstructionsModal(false)}
-              >
-                Got it!
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Dialog 
+        open={showInstructionsModal} 
+        onClose={() => setShowInstructionsModal(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">🗺️ How to Use This Map</Typography>
+          <IconButton onClick={() => setShowInstructionsModal(false)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            <ListItem>• Click on any tree marker on the map to view details</ListItem>
+            <ListItem>• View detailed information and photos in the sidebar</ListItem>
+            <ListItem>• Use the navigation arrows to browse through trees</ListItem>
+            <ListItem>• Search for specific trees by code, genus, or species</ListItem>
+            <ListItem>• Switch base maps using the buttons on the left</ListItem>
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={() => setShowInstructionsModal(false)}>
+            Got it!
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {loading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner">Loading tree data...</div>
-        </div>
-      )}
-      {error && (
-        <div className="error-overlay">
-          <div className="error-message">
-            Error loading data: {error}
-          </div>
-        </div>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <Card>
+            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <CircularProgress />
+              <Typography>Loading tree data...</Typography>
+            </CardContent>
+          </Card>
+        </Box>
       )}
       
-      {/* Home button - floating bottom left */}
-      <button 
-        className="home-icon-button"
+      {error && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <Alert severity="error" sx={{ maxWidth: 400 }}>
+            Error loading data: {error}
+          </Alert>
+        </Box>
+      )}
+      
+      {/* Floating Action Buttons */}
+      <Fab
+        size="medium"
+        sx={{ position: 'absolute', bottom: 90, left: 20, zIndex: 5 }}
+        color="default"
         onClick={() => window.location.href = window.location.pathname}
         title="Back to home"
       >
-        🏠
-      </button>
+        <HomeIcon fontSize="small" />
+      </Fab>
       
-      {/* Help button - floating bottom left */}
-      <button 
-        className="help-icon-button"
+      <Fab
+        size="medium"
+        sx={{ position: 'absolute', bottom: 20, left: 20, zIndex: 5 }}
+        color="default"
         onClick={() => setShowInstructionsModal(true)}
         title="How to use this map"
       >
-        ?
-      </button>
+        <HelpIcon fontSize="small" />
+      </Fab>
       
-      <div className="map-controls">
-        <button 
-          className={currentStyle === 'osm' ? 'active' : ''} 
-          onClick={() => changeBaseMap('osm')}
-        >
-          OSM
-        </button>
-        <button 
-          className={currentStyle === 'cartodb' ? 'active' : ''} 
-          onClick={() => changeBaseMap('cartodb')}
-        >
-          CartoDB
-        </button>
-        <button 
-          className={currentStyle === 'satellite' ? 'active' : ''} 
-          onClick={() => changeBaseMap('satellite')}
-        >
-          Satellite
-        </button>
-      </div>
-      <div ref={mapContainer} className="map-container" />
+      {/* Map Controls */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 10,
+          left: 10,
+          zIndex: 1,
+          background: 'white',
+          borderRadius: 1,
+          boxShadow: 2,
+        }}
+      >
+        <ButtonGroup variant="outlined" size="small">
+          <Button 
+            variant={currentStyle === 'osm' ? 'contained' : 'outlined'}
+            onClick={() => changeBaseMap('osm')}
+          >
+            OSM
+          </Button>
+          <Button 
+            variant={currentStyle === 'cartodb' ? 'contained' : 'outlined'}
+            onClick={() => changeBaseMap('cartodb')}
+          >
+            CartoDB
+          </Button>
+          <Button 
+            variant={currentStyle === 'satellite' ? 'contained' : 'outlined'}
+            onClick={() => changeBaseMap('satellite')}
+          >
+            Satellite
+          </Button>
+        </ButtonGroup>
+      </Box>
       
-      {/* Sidebar - Always visible */}
-      <div className="tree-sidebar">
+      <div ref={mapContainer} style={{ flex: 1, width: '100%', height: '100%' }} />
+      
+      {/* Sidebar */}
+      <Drawer
+        variant="permanent"
+        anchor="right"
+        sx={{
+          width: 400,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 400,
+            boxSizing: 'border-box',
+            position: 'absolute',
+          },
+        }}
+      >
         {/* Sidebar Header */}
-        <div className="sidebar-app-header">
-          <h1 className="sidebar-app-title">🌳 {schoolConfig?.schoolName || 'Loading...'}</h1>
-          <p className="sidebar-app-subtitle">Tree Inventory Map</p>
-        </div>
+        <Box
+          sx={{
+            background: 'linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%)',
+            color: 'white',
+            p: 2.5,
+            boxShadow: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+            🌳 {schoolConfig?.schoolName || 'Loading...'}
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+            Tree Inventory Map
+          </Typography>
+        </Box>
         
-        <div className="sidebar-header">
-          <h3>{selectedTree ? 'Tree Details' : 'Welcome'}</h3>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            p: 2,
+            borderBottom: 1,
+            borderColor: 'divider',
+            bgcolor: '#f8f8f8',
+          }}
+        >
+          <Typography variant="h6">
+            {selectedTree && 'Tree Details'}
+          </Typography>
           {selectedTree && (
-            <button 
-              className="clear-button" 
-              onClick={() => setSelectedTree(null)}
-              aria-label="Clear selection"
-            >
-              ✕
-            </button>
+            <IconButton onClick={() => setSelectedTree(null)} size="small">
+              <CloseIcon />
+            </IconButton>
           )}
-        </div>
+        </Box>
         
-        <div className="sidebar-content">
+        <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
           {!selectedTree ? (
             /* School Info when no tree selected */
-            <div className="welcome-section">
-              <div className="welcome-content">
-                <div className="info-box">
-                  <h4>📊 Inventory Overview</h4>
-                  <div className="stat-row">
-                    <span className="stat-label">Total Trees:</span>
-                    <span className="stat-value">{treeData.length}</span>
-                  </div>
-                  <div className="stat-row">
-                    <span className="stat-label">Unique Genera:</span>
-                    <span className="stat-value">
+            <Box>
+              <Card sx={{ mb: 2, borderRadius: 1 }}>
+                <CardContent>
+                  <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                    📊 Inventory Overview
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary">Total Trees:</Typography>
+                    <Typography variant="h6" color="text.primary">{treeData.length}</Typography>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Unique Genera:</Typography>
+                    <Typography variant="h6" color="text.primary">
                       {new Set(treeData.map(t => t.genus)).size}
-                    </span>
-                  </div>
-                </div>
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
 
-                <div className="search-section">
-                  <h4>🔍 Browse Trees</h4>
-                  <input
-                    type="text"
-                    className="tree-search"
-                    placeholder="Search by code, genus, or species..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="tree-list">
-                    {filteredTrees.slice(0, 20).map(tree => (
-                      <div
-                        key={tree.treeCode}
-                        className="tree-list-item"
-                        onClick={() => handleTreeSelect(tree)}
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600, mt: 3 }}>
+                🔍 Browse Trees
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search by code, genus, or species..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <Box
+                sx={{
+                  maxHeight: 300,
+                  overflow: 'auto',
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                }}
+              >
+                <List dense>
+                  {filteredTrees.slice(0, visibleTreeCount).map(tree => (
+                    <ListItemButton key={tree.treeCode} onClick={() => handleTreeSelect(tree)}>
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: 0.5,
+                          bgcolor: tree.color,
+                          mr: 1.5,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <ListItemText
+                        primary={tree.treeCode}
+                        secondary={`${tree.genus} ${tree.species}`}
+                        primaryTypographyProps={{ fontWeight: 600, fontSize: '0.875rem' }}
+                        secondaryTypographyProps={{ fontSize: '0.75rem', fontStyle: 'italic' }}
+                      />
+                    </ListItemButton>
+                  ))}
+                  {filteredTrees.length > visibleTreeCount && (
+                    <ListItem>
+                      <Button 
+                        fullWidth 
+                        size="small" 
+                        onClick={handleLoadMore}
+                        sx={{ color: 'text.secondary' }}
                       >
-                        <div className="tree-list-marker" style={{backgroundColor: tree.color}}></div>
-                        <div className="tree-list-info">
-                          <strong>{tree.treeCode}</strong>
-                          <span className="tree-list-species">{tree.genus} {tree.species}</span>
-                        </div>
-                      </div>
-                    ))}
-                    {filteredTrees.length > 20 && (
-                      <div className="tree-list-more">
-                        +{filteredTrees.length - 20} more trees...
-                      </div>
-                    )}
-                    {filteredTrees.length === 0 && searchQuery && (
-                      <div className="tree-list-empty">No trees found</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+                        +{filteredTrees.length - visibleTreeCount} more trees... (click to load)
+                      </Button>
+                    </ListItem>
+                  )}
+                  {filteredTrees.length === 0 && searchQuery && (
+                    <ListItem>
+                      <ListItemText
+                        primary="No trees found"
+                        primaryTypographyProps={{ color: 'text.secondary', textAlign: 'center' }}
+                      />
+                    </ListItem>
+                  )}
+                </List>
+              </Box>
+            </Box>
           ) : (
             /* Tree Details when selected */
-            <>
+            <Box>
               {/* Navigation */}
-              <div className="tree-navigation">
-                <button 
-                  className="nav-button" 
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 2,
+                  p: 1.5,
+                  bgcolor: '#f8f9fa',
+                  borderRadius: 1,
+                }}
+              >
+                <Button
+                  size="small"
+                  startIcon={<PrevIcon />}
                   onClick={handlePrevTree}
-                  title="Previous tree"
+                  variant="outlined"
                 >
-                  ← Previous
-                </button>
-                <span className="tree-counter">
+                  Previous
+                </Button>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
                   {treeData.findIndex(t => t.treeCode === selectedTree.treeCode) + 1} of {treeData.length}
-                </span>
-                <button 
-                  className="nav-button" 
+                </Typography>
+                <Button
+                  size="small"
+                  endIcon={<NextIcon />}
                   onClick={handleNextTree}
-                  title="Next tree"
+                  variant="outlined"
                 >
-                  Next →
-                </button>
-              </div>
+                  Next
+                </Button>
+              </Box>
 
-              <div className="tree-info-section">
-              <div className="info-row">
-                <span className="info-label">Tree Code:</span>
-                <span className="info-value">{selectedTree.treeCode}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Genus:</span>
-                <span className="info-value">{selectedTree.genus}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Species:</span>
-                <span className="info-value">{selectedTree.species}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">DBH (cm):</span>
-                <span className="info-value">{selectedTree.dbh || 'N/A'}</span>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Height (m):</span>
-                <span className="info-value">{selectedTree.height || 'N/A'}</span>
-              </div>
-              {(selectedTree.crownNS || selectedTree.crownEW) && (
-                <div className="info-row">
-                  <span className="info-label">Crown Size:</span>
-                  <span className="info-value">
-                    {selectedTree.crownNS && `NS: ${selectedTree.crownNS}m`}
-                    {selectedTree.crownNS && selectedTree.crownEW && ' / '}
-                    {selectedTree.crownEW && `EW: ${selectedTree.crownEW}m`}
-                  </span>
-                </div>
-              )}
-              <div className="info-row">
-                <span className="info-label">Coordinates:</span>
-                <span className="info-value">
-                  {selectedTree.lat.toFixed(6)}, {selectedTree.lon.toFixed(6)}
-                </span>
-              </div>
-            </div>
-            
-            {selectedTree.photoUrl ? (
-              <div className="tree-photo-section">
-                <img 
-                  src={selectedTree.photoUrl} 
-                  alt={`Tree ${selectedTree.treeCode}`} 
-                  className="sidebar-tree-photo"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'block'
-                  }}
-                />
-                <div className="photo-error" style={{display: 'none'}}>
-                  Photo not available
-                </div>
-              </div>
-            ) : (
-              <div className="no-photo-section">
-                <div className="no-photo-message">No photo available</div>
-              </div>
-            )}
-            </>
+              {/* Photo Section - Now at the top */}
+              <Box sx={{ mb: 2 }} key={selectedTree.treeCode}>
+                {selectedTree.photoUrl ? (
+                  <>
+                    {imageLoading && (
+                      <Box
+                        sx={{
+                          width: '100%',
+                          height: 250,
+                          bgcolor: '#f0f0f0',
+                          borderRadius: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <CircularProgress size={40} />
+                      </Box>
+                    )}
+                    <img 
+                      src={selectedTree.photoUrl} 
+                      alt={`Tree ${selectedTree.treeCode}`} 
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        borderRadius: 8,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        display: imageLoading ? 'none' : 'block',
+                      }}
+                      onLoad={() => setImageLoading(false)}
+                      onError={(e) => {
+                        setImageLoading(false)
+                        e.target.style.display = 'none'
+                        e.target.nextElementSibling.style.display = 'block'
+                      }}
+                    />
+                    <Card sx={{ display: 'none', bgcolor: '#f9f9f9' }}>
+                      <CardContent>
+                        <Typography variant="body2" color="text.secondary" fontStyle="italic" textAlign="center">
+                          Photo not available
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <Card sx={{ bgcolor: '#f9f9f9' }}>
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary" fontStyle="italic" textAlign="center">
+                        No photo available
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
+              </Box>
+
+              {/* Tree Data Card */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>Tree Code:</Typography>
+                    <Typography variant="body2">{selectedTree.treeCode}</Typography>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>Genus:</Typography>
+                    <Typography variant="body2">{selectedTree.genus}</Typography>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>Species:</Typography>
+                    <Typography variant="body2">{selectedTree.species}</Typography>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>DBH (cm):</Typography>
+                    <Typography variant="body2">{selectedTree.dbh || 'N/A'}</Typography>
+                  </Box>
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>Height (m):</Typography>
+                    <Typography variant="body2">{selectedTree.height || 'N/A'}</Typography>
+                  </Box>
+                  {(selectedTree.crownNS || selectedTree.crownEW) && (
+                    <>
+                      <Divider sx={{ my: 1 }} />
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2" color="text.secondary" fontWeight={600}>Crown Size:</Typography>
+                        <Typography variant="body2">
+                          {selectedTree.crownNS && `NS: ${selectedTree.crownNS}m`}
+                          {selectedTree.crownNS && selectedTree.crownEW && ' / '}
+                          {selectedTree.crownEW && `EW: ${selectedTree.crownEW}m`}
+                        </Typography>
+                      </Box>
+                    </>
+                  )}
+                  <Divider sx={{ my: 1 }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary" fontWeight={600}>Coordinates:</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'right' }}>
+                      {selectedTree.lat.toFixed(6)}, {selectedTree.lon.toFixed(6)}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Drawer>
+    </Box>
   )
 }
 

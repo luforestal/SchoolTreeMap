@@ -1,7 +1,9 @@
 import React from 'react'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
 import TreeMap from './components/TreeMap'
 import HomePage from './components/HomePage'
-import './App.css'
+import theme from './theme'
 
 function App() {
   // Check if we have a school parameter in URL
@@ -9,9 +11,12 @@ function App() {
   const schoolId = urlParams.get('school')
   
   return (
-    <div className="App">
-      {schoolId ? <TreeMap /> : <HomePage />}
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div style={{ width: '100%', height: '100vh' }}>
+        {schoolId ? <TreeMap /> : <HomePage />}
+      </div>
+    </ThemeProvider>
   )
 }
 
