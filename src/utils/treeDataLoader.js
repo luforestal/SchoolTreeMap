@@ -67,7 +67,7 @@ function parseCSVLine(line) {
  * Load and process tree data from CSV
  */
 export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}) {
-  const { username = 'luforestal', repo = 'WilletMap', branch = 'main' } = githubConfig
+  const { username = 'luforestal', repo = 'WilletMap', branch = 'main', photosFolder = 'photos' } = githubConfig
   
   try {
     const response = await fetch(csvPath)
@@ -110,10 +110,10 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
         crownRadius = (crownEW / 2) * 5
       }
       
-      // Build photo URL
+      // Build photo URL using photosFolder
       const treeCode = row.treeCode || ''
       const photoUrl = treeCode 
-        ? `https://raw.githubusercontent.com/${username}/${repo}/refs/heads/${branch}/photos/${treeCode}.jpg`
+        ? `https://raw.githubusercontent.com/${username}/${repo}/refs/heads/${branch}/${photosFolder}/${treeCode}.jpg`
         : null
       
       return {

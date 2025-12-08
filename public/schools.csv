@@ -1,0 +1,2 @@
+schoolId,schoolName,dataFile,boundaryFile,photosFolder
+willet,Willet Elementary,tree_data.csv,willet_boundary.geojson,photos

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Tree Inventory Maps</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    
+    h1 {
+      color: #2d5016;
+      font-size: 36px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+    
+    #loading {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+    }
+    
+    .school-list {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .school-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+    
+    .school-card:hover {
+      background: #e9ecef;
+      border-color: #4a7c2c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .school-name {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2d5016;
+      margin-bottom: 8px;
+    }
+    
+    .school-info {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .error {
+      background: #fee;
+      color: #c00;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌳 School Tree Inventory Maps</h1>
+    <p class="subtitle">Interactive tree mapping for schools</p>
+    
+    <div id="loading">Loading schools...</div>
+    <div id="schools" class="school-list"></div>
+  </div>
+  
+  <script>
+    async function loadSchools() {
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/luforestal/WilletMap/refs/heads/main/public/schools.csv')
+        if (!response.ok) throw new Error('Failed to load schools')
+        
+        const csvText = await response.text()
+        const lines = csvText.trim().split('\n')
+        const headers = lines[0].split(',').map(h => h.trim())
+        
+        const schools = lines.slice(1).map(line => {
+          const values = line.split(',').map(v => v.trim())
+          const obj = {}
+          headers.forEach((header, i) => {
+            obj[header] = values[i] || ''
+          })
+          return obj
+        })
+        
+        displaySchools(schools)
+      } catch (error) {
+        document.getElementById('loading').innerHTML = 
+          `<div class="error">Error loading schools: ${error.message}</div>`
+      }
+    }
+    
+    function displaySchools(schools) {
+      const container = document.getElementById('schools')
+      document.getElementById('loading').style.display = 'none'
+      
+      container.innerHTML = schools.map(school => `
+        <a href="?school=${school.schoolId}" class="school-card">
+          <div class="school-name">🌳 ${school.schoolName}</div>
+          <div class="school-info">View interactive tree map →</div>
+        </a>
+      `).join('')
+    }
+    
+    // Check if we're on the root or have a school parameter
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('school')) {
+      // Redirect to the map app
+      window.location.href = './map.html' + window.location.search
+    } else {
+      // Show school list
+      loadSchools()
+    }
+  </script>
+</body>
+</html>

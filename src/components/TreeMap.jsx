@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './TreeMap.css'
 import { loadTreeData } from '../utils/treeDataLoader'
-import { boundaryData } from '../data/boundary'
+import { getSchoolIdFromURL, getSchoolConfig, loadSchoolBoundary } from '../utils/schoolLoader'
 
 const TreeMap = () => {
   const mapContainer = useRef(null)
@@ -17,18 +17,32 @@ const TreeMap = () => {
   const markersRef = useRef([])
   const [searchQuery, setSearchQuery] = useState('')
   const [showInstructionsModal, setShowInstructionsModal] = useState(true)
+  const [schoolConfig, setSchoolConfig] = useState(null)
+  const [boundary, setBoundary] = useState(null)
 
-  // Load tree data from CSV
+  // Load school configuration and data
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true)
+        
+        // Get school from URL parameter
+        const schoolId = getSchoolIdFromURL()
+        const config = await getSchoolConfig(schoolId)
+        setSchoolConfig(config)
+        
+        // Load boundary
+        const boundaryGeoJSON = await loadSchoolBoundary(config.boundaryFile)
+        setBoundary(boundaryGeoJSON)
+        
+        // Load tree data
         const { trees } = await loadTreeData(
-          'https://raw.githubusercontent.com/luforestal/WilletMap/refs/heads/main/public/tree_data.csv',
+          config.dataUrl,
           {
             username: 'luforestal',
             repo: 'WilletMap',
-            branch: 'main'
+            branch: 'main',
+            photosFolder: config.photosFolder
           }
         )
         setTreeData(trees)
@@ -80,10 +94,10 @@ const TreeMap = () => {
 
     map.current.on('load', () => {
       // Add boundary layer
-      if (boundaryData) {
+      if (boundary) {
         map.current.addSource('boundary', {
           type: 'geojson',
-          data: boundaryData
+          data: boundary
         })
 
         map.current.addLayer({
@@ -250,10 +264,10 @@ const TreeMap = () => {
       
       // Re-add boundary and markers after style change
       map.current.once('styledata', () => {
-        if (boundaryData && !map.current.getSource('boundary')) {
+        if (boundary && !map.current.getSource('boundary')) {
           map.current.addSource('boundary', {
             type: 'geojson',
-            data: boundaryData
+            data: boundary
           })
           map.current.addLayer({
             id: 'boundary-line',
@@ -384,7 +398,7 @@ const TreeMap = () => {
       <div className="tree-sidebar">
         {/* Sidebar Header */}
         <div className="sidebar-app-header">
-          <h1 className="sidebar-app-title">🌳 Willet Elementary</h1>
+          <h1 className="sidebar-app-title">🌳 {schoolConfig?.schoolName || 'Loading...'}</h1>
           <p className="sidebar-app-subtitle">Tree Inventory Map</p>
         </div>
         
