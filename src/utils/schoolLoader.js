@@ -16,16 +16,41 @@ const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_CONFIG.usern
  */
 function parseCSV(csvText) {
   const lines = csvText.trim().split('\n')
-  const headers = lines[0].split(',').map(h => h.trim())
+  const headers = parseCSVLine(lines[0])
   
   return lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim())
+    const values = parseCSVLine(line)
     const obj = {}
     headers.forEach((header, i) => {
       obj[header] = values[i] || ''
     })
     return obj
   })
+}
+
+/**
+ * Parse a single CSV line handling quoted values
+ */
+function parseCSVLine(line) {
+  const values = []
+  let current = ''
+  let inQuotes = false
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+    
+    if (char === '"') {
+      inQuotes = !inQuotes
+    } else if (char === ',' && !inQuotes) {
+      values.push(current.trim())
+      current = ''
+    } else {
+      current += char
+    }
+  }
+  values.push(current.trim())
+  
+  return values
 }
 
 /**
