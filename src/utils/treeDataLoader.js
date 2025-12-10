@@ -116,7 +116,8 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
       // Get photo path - either from CSV or construct from base URL
       let photoUrl = null
       if (row.photoPath) {
-        photoUrl = row.photoPath
+        // If photoPath starts with /, prepend base path for GitHub Pages
+        photoUrl = row.photoPath.startsWith('/') ? `/SchoolTreeMap${row.photoPath}` : row.photoPath
       } else if (treeCode && photosUrl) {
         photoUrl = `${photosUrl}/${treeCode}.jpg`
       }
