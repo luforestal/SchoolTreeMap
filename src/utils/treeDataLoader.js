@@ -122,10 +122,13 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
         photoUrl = `${photosUrl}/${treeCode}.jpg`
       }
       
+      const lat = parseFloat(row.lat)
+      const lon = parseFloat(row.lon)
+      
       return {
         treeCode: treeCode,
-        lat: parseFloat(row.lat),
-        lon: parseFloat(row.lon),
+        lat,
+        lon,
         genus: row.genus || '',
         species: row.species || '',
         dbh: row.dbh || '',
@@ -139,7 +142,16 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
       }
     })
     
-    return { trees, genusStyles }
+    // Filter out trees with invalid coordinates
+    const validTrees = trees.filter(tree => {
+      if (isNaN(tree.lat) || isNaN(tree.lon)) {
+        console.warn(`Skipping tree ${tree.treeCode} with invalid coordinates: (${tree.lat}, ${tree.lon})`)
+        return false
+      }
+      return true
+    })
+    
+    return { trees: validTrees, genusStyles }
     
   } catch (error) {
     console.error('Error loading tree data:', error)
