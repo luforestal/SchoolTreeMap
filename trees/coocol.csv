@@ -1,0 +1,76 @@
+treecode,genus,species,dbh,crownNSm,crownEWm,height,lon,lat,photoPath
+A01,Platanus ,x hispanica ,48.8,12.6,11.7,18.5,34.05322987,-117.2924105,photos/coocol/A01.webp
+A02,Platanus ,x hispanica ,52.5,13.9,13.8,15.6,34.05323294,-117.2920631,photos/coocol/A02.webp
+A03,Magnolia ,grandiflora,23.5,6.4,5.7,8.7,34.05282021,-117.2924637,photos/coocol/A03.webp
+A04,Pinus,canariensis ,38.5,7.4,7.2,14.9,34.05272777,-117.2920284,photos/coocol/A04.webp
+A05,Platanus ,x hispanica ,44.1,12.6,11.6,13.5,34.05260906,-117.2920857,photos/coocol/A05.webp
+A06,Pinus,canariensis ,32.6,6.1,5.8,13,34.05242587,-117.2919584,photos/coocol/A06.webp
+A07,Pinus,canariensis ,49.6,9.4,8.9,19.1,34.05218427,-117.292261,photos/coocol/A07.webp
+A08,Lagustroemia ,CVS,29.8,7,8.5,7,34.05197987,-117.2923071,photos/coocol/A08.webp
+A09,Magnolia ,grandiflora,29.3,8.5,9.2,8.4,34.05178264,-117.2923571,photos/coocol/A09.webp
+A10,Lagustroemia ,CVS,24.8,6.8,4.7,6.9,34.05179099,-117.2922731,photos/coocol/A10.webp
+A11,Magnolia ,grandiflora,29,7.7,8.2,5,34.05178729,-117.2922167,photos/coocol/A11.webp
+A12,Magnolia ,grandiflora,26.2,7.8,7.4,8.3,34.0517887,-117.2920465,photos/coocol/A12.webp
+A13,Eucalyptus ,globulus,72.5,11.6,11.3,16,34.05183027,-117.2919746,photos/coocol/A13.webp
+A14,Magnolia ,grandiflora,21.6,5.1,5.6,6.3,34.05162299,-117.2920108,photos/coocol/A14.webp
+A15,Magnolia ,grandiflora,29.6,6.7,7.4,10.4,34.05153514,-117.2920133,photos/coocol/A15.webp
+A16,Magnolia ,grandiflora,26.6,6.6,6,8.7,34.05144364,-117.2920109,photos/coocol/A16.webp
+A17,Schinus ,terebinthifolius,49,13.2,15.1,8.7,34.05188872,-117.2921835,photos/coocol/A17.webp
+A18,Fraxinus,angustifolia,42.3,10,10.4,11,34.05205535,-117.291955,photos/coocol/A18.webp
+A19,Platanus ,x hispanica ,41.2,10.2,9.4,16.4,34.0521378,-117.2918623,photos/coocol/A19.webp
+A20,Platanus ,x hispanica ,24.7,7.5,7,9.2,34.05192642,-117.2916642,photos/coocol/A20.webp
+A21,Platanus ,x hispanica ,30.3,7.9,8.2,10.2,34.05167961,-117.2918067,photos/coocol/A21.webp
+A22,Platanus ,x hispanica ,56.2,13.9,14.3,17.5,34.05136419,-117.2916482,photos/coocol/A22.webp
+A23,Morus,alba,30.5,9.8,10.2,6.2,34.05128907,-117.29165,photos/coocol/A23.webp
+A24,Lophostemon ,confertus,17.3,3.7,2.3,7.2,34.0512667,-117.2917127,photos/coocol/A24.webp
+A25,Lophostemon ,confertus,34.8,5,5.6,9,34.0512452,-117.2917769,photos/coocol/A25.webp
+A26,Jacaranda,mimosifolia,62.3,9.5,8,12.3,34.05242814,-117.2927559,photos/coocol/A26.webp
+A27,Jacaranda,mimosifolia,66.6,12.2,11.8,16.8,34.05231339,-117.2927405,photos/coocol/A27.webp
+A28,Jacaranda,mimosifolia,65.8,14,12.8,15,34.0522397,-117.29274,photos/coocol/A28.webp
+A29,Magnolia ,grandiflora,24.5,7.2,6.6,7.8,34.05209944,-117.292648,photos/coocol/A29.webp
+A30,Washigntonia,robusta,47.9,3.2,2.9,18.9,34.05190264,-117.2927202,photos/coocol/A30.webp
+A31,Jacaranda,mimosifolia,66.2,14.7,14.4,15.6,34.05170014,-117.2927452,photos/coocol/A31.webp
+A32,Lophostemon ,confertus,46.3,7.8,7.6,9.2,34.0512741,-117.2919703,photos/coocol/A32.webp
+A33,Lophostemon ,confertus,29.8,7.2,6.5,9.1,34.05125172,-117.2918942,photos/coocol/A33.webp
+A34,Washigntonia,filera,59.8,4.1,4.6,14.6,34.05287206,-117.2918387,photos/coocol/A34.webp
+B01,Lophostemon ,confertus,19.8,5.1,1.6,8.2,34.05163855,-117.2916011,photos/coocol/B01.webp
+B02,Lophostemon ,confertus,19.3,4.3,3.9,8.1,34.05141114,-117.2916073,photos/coocol/B02.webp
+B03,Zelkova,serrata,7,4.4,4.2,5,34.05127095,-117.2915597,photos/coocol/B03.webp
+B04,Zelkova,serrata,11.2,4.7,4.7,5.6,34.05114641,-117.2914321,photos/coocol/B04.webp
+B05,Platanus ,x hispanica ,34,9.2,8.9,13.2,34.05106851,-117.29138,photos/coocol/B05.webp
+B06,Platanus ,x hispanica ,49.5,15.2,11.9,18.4,34.05104166,-117.2912432,photos/coocol/B06.webp
+B07,Platanus ,x hispanica ,64.2,15.9,9.1,21.8,34.05115247,-117.2911358,photos/coocol/B07.webp
+B08,Pistacia,chinensis,10.2,4.7,4.4,5.7,34.05110914,-117.2913113,photos/coocol/B08.webp
+B09,Pistacia,chinensis,10.6,5.2,4.3,4.7,34.05125372,-117.2910694,photos/coocol/B09.webp
+B10,Alnus,incana,35.4,7.3,8.5,9.3,34.05135021,-117.2911904,photos/coocol/B10.webp
+B11,Zelkova,serrata,13.9,6.7,6.9,6.1,34.05136754,-117.2914801,photos/coocol/B11.webp
+B12,Platanus ,x hispanica ,38.8,12.5,13.1,14.8,34.05149595,-117.2913516,photos/coocol/B12.webp
+B13,Zelkova,serrata,9.7,4.4,4.9,6.3,34.0515207,-117.2912082,photos/coocol/B13.webp
+B14,Pistacia,chinensis,7.4,7.6,4,4.6,34.05137238,-117.2910921,photos/coocol/B14.webp
+B15,Zelkova,serrata,9.6,4.8,3.7,6,34.05142576,-117.2909832,photos/coocol/B15.webp
+B16,Platanus ,x hispanica ,21.2,4.4,7,10.5,34.05150762,-117.2908617,photos/coocol/B16.webp
+B17,null,null,,,,,34.05164196,-117.2911801,photos/coocol/B17.webp
+B18,Platanus ,x hispanica ,45.6,12.4,13.3,15.3,34.05161324,-117.2913589,photos/coocol/B18.webp
+B19,Platanus ,x hispanica ,40,12.3,10.8,14,34.05178114,-117.2912782,photos/coocol/B19.webp
+B20,Pistacia,chinensis,10.4,4.3,5,5.2,34.05176865,-117.2911757,photos/coocol/B20.webp
+B21,Platanus ,x hispanica ,30.3,4.8,7.9,12,,,photos/coocol/B21.webp
+B22,Platanus ,x hispanica ,70.9,8.1,15.7,22.3,34.0515868,-117.2908076,photos/coocol/B22.webp
+B23,Platanus ,x hispanica ,63.5,7.8,16.9,23.5,34.05177269,-117.2906504,photos/coocol/B23.webp
+B24,Platanus ,x hispanica ,30.9,7.1,9.3,8.5,34.05182645,-117.2905905,photos/coocol/B24.webp
+B25,Platanus ,x hispanica ,76.9,19.5,16.5,21.4,34.05191424,-117.2905814,photos/coocol/B25.webp
+B26,Platanus ,x hispanica ,8.1,4.2,3.1,5.4,34.05196801,-117.2905884,photos/coocol/B26.webp
+B27,Platanus ,x hispanica ,67.9,19.7,17.5,19.4,34.05209391,-117.2903941,photos/coocol/B27.webp
+B28,Platanus ,x hispanica ,46,13.5,14.9,14.3,34.05241362,-117.2906837,photos/coocol/B28.webp
+B29,Platanus ,x hispanica ,34,11.5,12.1,11.1,34.05256794,-117.290898,photos/coocol/B29.webp
+B30,Platanus ,x hispanica ,43.7,11.8,12.2,15,34.05202721,-117.2912784,photos/coocol/B30.webp
+B31,Platanus ,x hispanica ,51,12,12.5,18.4,34.05234322,-117.2914433,photos/coocol/B31.webp
+B32,Platanus ,x hispanica ,41.3,12.9,10.3,13.7,34.0525204,-117.2914438,photos/coocol/B32.webp
+B33,Platanus ,x hispanica ,28.3,8.1,8.8,10.1,34.05262626,-117.2914318,photos/coocol/B33.webp
+B34,Platanus ,x hispanica ,39.7,11.1,11.2,15.4,34.05270554,-117.2914363,photos/coocol/B34.webp
+B35,Pistacia,chinensis,37.4,10.1,9.9,14,34.05279748,-117.2914244,photos/coocol/B35.webp
+B36,Gleditsia,triacanthos,28.3,7.7,9.5,9.8,34.05315806,-117.2913689,photos/coocol/B36.webp
+B37,Pistacia,chinensis,7.3,4.1,3.8,4.7,34.05311411,-117.2914891,photos/coocol/B37.webp
+B38,Zelkova,serrata,12.6,5.4,5.6,6.8,34.05319212,-117.2914686,photos/coocol/B38.webp
+B39,Alnus,incana,36.8,8.5,8.4,9.3,34.05329218,-117.291513,photos/coocol/B39.webp
+B40,Platanus ,x hispanica ,42.2,13.8,11.4,16.2,34.05304641,-117.2916806,photos/coocol/B40.webp
+B41,Platanus ,x hispanica ,28.5,9.7,11.3,13.6,34.05310039,-117.2917401,photos/coocol/B41.webp
