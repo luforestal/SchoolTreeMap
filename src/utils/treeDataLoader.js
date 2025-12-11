@@ -144,12 +144,29 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
     
     // Filter out trees with invalid coordinates
     const validTrees = trees.filter(tree => {
+      // Check if coordinates are valid numbers
       if (isNaN(tree.lat) || isNaN(tree.lon)) {
-        console.warn(`Skipping tree ${tree.treeCode} with invalid coordinates: (${tree.lat}, ${tree.lon})`)
+        console.warn(`Skipping tree ${tree.treeCode}: invalid coordinates (${tree.lat}, ${tree.lon})`)
         return false
       }
+      
+      // Check if coordinates are within valid ranges
+      if (tree.lat < -90 || tree.lat > 90) {
+        console.warn(`Skipping tree ${tree.treeCode}: latitude ${tree.lat} out of range (-90 to 90)`)
+        return false
+      }
+      
+      if (tree.lon < -180 || tree.lon > 180) {
+        console.warn(`Skipping tree ${tree.treeCode}: longitude ${tree.lon} out of range (-180 to 180)`)
+        return false
+      }
+      
       return true
     })
+    
+    if (validTrees.length < trees.length) {
+      console.warn(`Filtered out ${trees.length - validTrees.length} trees with invalid coordinates`)
+    }
     
     return { trees: validTrees, genusStyles }
     
