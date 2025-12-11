@@ -1,3 +1,4 @@
 id,school_name,logo,address,data_file,boundary_file,photos_folder
 wildav,Robert E Willett Elementary,logos/wildav.png,"1207 Sycamore Ln, Davis, CA 95616",trees/wildav.csv,boundaries/wildav.geojson,photos/wildav
 coocol,Cooley Ranch Elementary School,logos/coocol.png,"1000 S Cooley Dr E, Colton, CA 92324",trees/coocol.csv,boundaries/coocol.geojson,photos/coocol
+rutcol,Ruth Grimes Elementary School,logos/rutcol.png,"1609 Spruce Ave, Bloomington, CA 92316",trees/rutcol.csv,boundaries/rutcol.geojson,photos/rutcol
