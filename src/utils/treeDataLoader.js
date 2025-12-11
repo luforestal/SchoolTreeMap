@@ -113,6 +113,15 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
       // Store tree code for on-demand photo loading
       const treeCode = row.treecode || row.treeCode || ''
       
+      // Get photo path - either from CSV or construct from base URL
+      let photoUrl = null
+      if (row.photoPath) {
+        // If photoPath starts with /, prepend base path for GitHub Pages
+        photoUrl = row.photoPath.startsWith('/') ? `/SchoolTreeMap${row.photoPath}` : row.photoPath
+      } else if (treeCode && photosUrl) {
+        photoUrl = `${photosUrl}/${treeCode}.jpg`
+      }
+      
       return {
         treeCode: treeCode,
         lat: parseFloat(row.lat),
@@ -126,7 +135,7 @@ export async function loadTreeData(csvPath = '/tree_data.csv', githubConfig = {}
         crownRadius,
         color: style.color,
         shape: style.shape,
-        photosBaseUrl: photosUrl // Store base URL for on-demand loading
+        photoUrl: photoUrl // Full photo URL
       }
     })
     
