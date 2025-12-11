@@ -1,4 +1,4 @@
-treecode,genus,species,dbh,crownNSm,crownEWm,height,lon,lat,photoPath
+treecode,genus,species,dbh,crownNSm,crownEWm,height,lat,lon ,photoPath
 A01,Platanus ,x hispanica ,48.8,12.6,11.7,18.5,34.05322987,-117.2924105,photos/coocol/A01.webp
 A02,Platanus ,x hispanica ,52.5,13.9,13.8,15.6,34.05323294,-117.2920631,photos/coocol/A02.webp
 A03,Magnolia ,grandiflora,23.5,6.4,5.7,8.7,34.05282021,-117.2924637,photos/coocol/A03.webp
@@ -53,7 +53,7 @@ B17,null,null,,,,,34.05164196,-117.2911801,photos/coocol/B17.webp
 B18,Platanus ,x hispanica ,45.6,12.4,13.3,15.3,34.05161324,-117.2913589,photos/coocol/B18.webp
 B19,Platanus ,x hispanica ,40,12.3,10.8,14,34.05178114,-117.2912782,photos/coocol/B19.webp
 B20,Pistacia,chinensis,10.4,4.3,5,5.2,34.05176865,-117.2911757,photos/coocol/B20.webp
-B21,Platanus ,x hispanica ,30.3,4.8,7.9,12,,,photos/coocol/B21.webp
+B21,Platanus ,x hispanica ,30.3,4.8,7.9,12,34.051667,117.290556,photos/coocol/B21.webp
 B22,Platanus ,x hispanica ,70.9,8.1,15.7,22.3,34.0515868,-117.2908076,photos/coocol/B22.webp
 B23,Platanus ,x hispanica ,63.5,7.8,16.9,23.5,34.05177269,-117.2906504,photos/coocol/B23.webp
 B24,Platanus ,x hispanica ,30.9,7.1,9.3,8.5,34.05182645,-117.2905905,photos/coocol/B24.webp
