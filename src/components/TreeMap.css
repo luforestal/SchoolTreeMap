@@ -93,3 +93,32 @@
   color: #666;
   margin-top: 8px;
 }
+
+/* Mobile-specific styles */
+@media (max-width: 900px) {
+  /* Ensure map takes full width on mobile */
+  .maplibregl-map {
+    width: 100% !important;
+  }
+  
+  /* Make tree markers slightly larger for touch targets */
+  .tree-marker {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tree-marker-container:hover .tree-marker,
+  .tree-marker-container:active .tree-marker {
+    transform: scale(1.4);
+  }
+  
+  /* Larger active marker on mobile */
+  .tree-marker-container.active .tree-marker {
+    transform: scale(2);
+  }
+  
+  /* Hide popup on mobile (we use bottom sheet instead) */
+  .maplibregl-popup {
+    display: none !important;
+  }
+}

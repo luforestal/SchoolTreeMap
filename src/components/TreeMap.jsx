@@ -9,10 +9,13 @@ import {
   Card,
   CardContent,
   Fab,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import {
   Home as HomeIcon,
   Help as HelpIcon,
+  List as ListIcon,
 } from '@mui/icons-material'
 import MapView from './MapView'
 import TreeSidebar from './TreeSidebar'
@@ -29,7 +32,11 @@ const TreeMap = () => {
   const [showInstructionsModal, setShowInstructionsModal] = useState(true)
   const [schoolConfig, setSchoolConfig] = useState(null)
   const [boundary, setBoundary] = useState(null)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const mapRef = React.useRef(null)
+  
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   // Load school configuration and data
   useEffect(() => {
@@ -80,6 +87,11 @@ const TreeMap = () => {
         zoom: 19,
         duration: 1000
       })
+    }
+    
+    // Open bottom sheet on mobile when tree is selected
+    if (isMobile) {
+      setMobileDrawerOpen(true)
     }
   }
 
@@ -173,6 +185,28 @@ const TreeMap = () => {
         <HelpIcon fontSize="small" />
       </Fab>
       
+      {/* Mobile: Show List Button */}
+      {isMobile && (
+        <Fab
+          size="medium"
+          sx={{ 
+            position: 'absolute', 
+            bottom: 20, 
+            right: 20, 
+            zIndex: 5,
+            bgcolor: '#2d5016',
+            color: 'white',
+            '&:hover': {
+              bgcolor: '#1e3610',
+            }
+          }}
+          onClick={() => setMobileDrawerOpen(true)}
+          title="View tree list"
+        >
+          <ListIcon fontSize="small" />
+        </Fab>
+      )}
+      
       {/* Map View */}
       <MapView
         treeData={treeData}
@@ -188,6 +222,9 @@ const TreeMap = () => {
         schoolConfig={schoolConfig}
         selectedTree={selectedTree}
         onClose={() => setSelectedTree(null)}
+        mobileOpen={mobileDrawerOpen}
+        onMobileOpen={() => setMobileDrawerOpen(true)}
+        onMobileClose={() => setMobileDrawerOpen(false)}
       >
         {selectedTree ? (
           <TreeDetails
